@@ -24,6 +24,9 @@ export default function Layout() {
             <Link to="/documents" className="text-neutral-600 hover:text-neutral-900">
               文档
             </Link>
+            <Link to="/eval" className="text-neutral-600 hover:text-neutral-900">
+              评测
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-3 text-sm">

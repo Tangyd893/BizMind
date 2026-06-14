@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     embedding_model: str = Field(default="text-embedding-3-small", alias="EMBEDDING_MODEL")
     chunk_size: int = Field(default=512, alias="CHUNK_SIZE")
     chunk_overlap: int = Field(default=64, alias="CHUNK_OVERLAP")
+    parent_chunk_size: int = Field(default=2048, alias="PARENT_CHUNK_SIZE")
     retrieval_top_k: int = Field(default=20, alias="RETRIEVAL_TOP_K")
     rerank_top_k: int = Field(default=4, alias="RERANK_TOP_K")
 

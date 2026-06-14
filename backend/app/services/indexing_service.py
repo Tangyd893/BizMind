@@ -9,7 +9,6 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import get_settings
 from app.models import Document, DocumentStatus
 from app.rag.chunker import chunk_document
 from app.rag.embedder import get_embedding_client
@@ -52,18 +51,23 @@ async def _index_document(session: AsyncSession, document_id: str) -> None:
     with open(file_path, encoding="utf-8") as f:
         text = f.read()
 
-    # Chunk
+    # Chunk (parent-child per ADR-003)
     chunk_result = chunk_document(text)
-    get_settings()
 
-    # Build payloads
-    chunk_dicts = []
+    # Build parent ID map: index → UUID
+    parent_ids: dict[int, uuid.UUID] = {}
+    for p in chunk_result.parent_chunks:
+        parent_ids[p.index] = uuid.uuid4()
+
+    # Build child payloads with parent linking
+    child_dicts = []
     for _i, chunk in enumerate(chunk_result.chunks):
-        chunk_dicts.append({
+        pid = parent_ids.get(chunk.parent_index) if chunk.parent_index is not None else None
+        child_dicts.append({
             "chunk_id": uuid.uuid4(),
             "tenant_id": str(doc.tenant_id),
             "document_id": str(doc.id),
-            "parent_id": None,
+            "parent_id": str(pid) if pid else None,
             "chunk_type": "child",
             "source": doc.filename,
             "page": None,
@@ -71,23 +75,41 @@ async def _index_document(session: AsyncSession, document_id: str) -> None:
             "documents_version": doc.documents_version,
         })
 
-    # Batch embed
+    # Also build parent payloads (stored alongside for retrieval context)
+    parent_dicts = []
+    for p in chunk_result.parent_chunks:
+        pid = parent_ids[p.index]
+        parent_dicts.append({
+            "chunk_id": pid,
+            "tenant_id": str(doc.tenant_id),
+            "document_id": str(doc.id),
+            "parent_id": None,
+            "chunk_type": "parent",
+            "source": doc.filename,
+            "page": None,
+            "text_preview": p.text[:200],
+            "documents_version": doc.documents_version,
+        })
+
+    all_dicts = child_dicts + parent_dicts
+    all_texts = [c.text for c in chunk_result.chunks] + [p.text for p in chunk_result.parent_chunks]
+
+    # Batch embed all (children + parents)
     embedder = get_embedding_client()
     batch_size = 20
     all_embeddings = []
-    for i in range(0, len(chunk_result.chunks), batch_size):
-        batch = [c.text for c in chunk_result.chunks[i : i + batch_size]]
-        embeddings = await embedder.embed(batch)
+    for i in range(0, len(all_texts), batch_size):
+        batch_texts = all_texts[i : i + batch_size]
+        embeddings = await embedder.embed(batch_texts)
         all_embeddings.extend(embeddings)
 
     # Upsert to Qdrant
     store = get_qdrant_store()
-    await store.upsert_chunks(chunk_dicts, all_embeddings)
+    await store.upsert_chunks(all_dicts, all_embeddings)
 
     # Mark as indexed
     doc.status = DocumentStatus.INDEXED
     doc.chunk_count = len(chunk_result.chunks)
-    doc.indexed_at = None  # will be set below
     await session.commit()
 
 

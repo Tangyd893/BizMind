@@ -47,12 +47,14 @@ class EmbeddingClient:
         return results[0]
 
 
-# Singleton
-_embedding_client: EmbeddingClient | None = None
+# Singleton — returns cached version by default for cost savings
+from app.rag.embedding_cache import CachedEmbeddingClient  # noqa: E402
+
+_cached_client: CachedEmbeddingClient | None = None
 
 
-def get_embedding_client() -> EmbeddingClient:
-    global _embedding_client
-    if _embedding_client is None:
-        _embedding_client = EmbeddingClient()
-    return _embedding_client
+def get_embedding_client() -> CachedEmbeddingClient:
+    global _cached_client
+    if _cached_client is None:
+        _cached_client = CachedEmbeddingClient()
+    return _cached_client

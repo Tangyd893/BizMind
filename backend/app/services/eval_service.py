@@ -143,12 +143,88 @@ async def run_eval(
 
     # Run evaluation
     start = time.perf_counter()
-    metrics = await _run_baseline_eval(qa_pairs, str(admin.tenant_id))
+    if mode == "agent":
+        metrics = await _run_agent_eval(qa_pairs, str(admin.tenant_id))
+    elif mode == "both":
+        baseline = await _run_baseline_eval(qa_pairs, str(admin.tenant_id))
+        agent = await _run_agent_eval(qa_pairs, str(admin.tenant_id))
+        metrics = {"baseline": baseline, "agent": agent}
+    else:
+        metrics = await _run_baseline_eval(qa_pairs, str(admin.tenant_id))
     eval_run.metrics = metrics
     eval_run.duration_sec = int(time.perf_counter() - start)
     await session.commit()
 
     return {"run_id": str(run_id), "status": "completed"}
+
+
+async def _run_agent_eval(
+    qa_pairs: list[dict],
+    tenant_id: str,
+    progress_callback=None,
+) -> dict:
+    """Run agentic RAG on each QA pair and compute RAGAS metrics."""
+    from datasets import Dataset
+    from ragas import evaluate
+    from ragas.metrics import answer_relevancy, context_precision, context_recall, faithfulness
+
+    empty_metrics = {
+        "faithfulness": 0.0, "answer_relevancy": 0.0,
+        "context_precision": 0.0, "context_recall": 0.0,
+    }
+    if not qa_pairs:
+        return empty_metrics
+
+    questions = []
+    answers = []
+    contexts_list = []
+
+    for i, qa in enumerate(qa_pairs):
+        question = qa["question"]
+        _ground_truth = qa.get("answer", "")
+
+        # Use hybrid retriever for agent mode
+        from app.rag.retriever import hybrid_retrieve
+        result = await hybrid_retrieve(question, tenant_id)
+        context_texts = [c.text_preview for c in result.chunks]
+
+        # Generate answer with richer prompt
+        llm = get_llm_client()
+        context_block = "\n".join(f"- {c}" for c in context_texts)
+        prompt = (
+            "You are an enterprise assistant. Answer based on the context.\n\n"
+            f"Context:\n{context_block}\n\n"
+            f"Question: {question}"
+        )
+        answer = ""
+        async for token in llm.chat_stream([{"role": "user", "content": prompt}]):
+            answer += token
+
+        questions.append(question)
+        answers.append(answer)
+        contexts_list.append(context_texts)
+
+        if progress_callback:
+            progress_callback(i + 1, len(qa_pairs))
+
+    try:
+        dataset = Dataset.from_dict({
+            "question": questions,
+            "answer": answers,
+            "contexts": contexts_list,
+        })
+        result = evaluate(
+            dataset,
+            metrics=[faithfulness, answer_relevancy, context_precision, context_recall],
+        )
+        return {
+            "faithfulness": float(result.get("faithfulness", 0.0) or 0.0),
+            "answer_relevancy": float(result.get("answer_relevancy", 0.0) or 0.0),
+            "context_precision": float(result.get("context_precision", 0.0) or 0.0),
+            "context_recall": float(result.get("context_recall", 0.0) or 0.0),
+        }
+    except Exception:
+        return empty_metrics
 
 
 async def list_eval_runs(

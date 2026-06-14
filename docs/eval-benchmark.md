@@ -1,8 +1,8 @@
 # BizMind — 评测基准与 RAGAS 实验
 
-> **版本：** v0.1  
-> **状态：** 📋 模板就绪，跑分结果待实现后填入  
-> **关联：** [requirements FR-EVAL](./requirements.md#25-评测-fr-eval) · [项目设计 §8](./项目设计.md#8-评测体系)
+> **版本：** v0.2  
+> **状态：** 🚧 Baseline RAGAS 经 API 可用；Agent 模式与 CLI 待接通；Golden QA **12/20**  
+> **关联：** [progress.md](./progress.md) · [requirements FR-EVAL](./requirements.md#25-评测-fr-eval)
 
 ---
 
@@ -59,7 +59,7 @@ data/golden_qa.jsonl
 | rejection | 文档外应拒答/说明未知 | ≥ 4 |
 | version_sensitive | 依赖特定版本表述 | ≥ 2 |
 
-**总量：** ≥ 20 条，三类文档各覆盖。
+**总量：** ≥ 20 条（**当前 12 条**，见 `data/golden_qa.jsonl`），三类文档各覆盖。
 
 ### 2.5 示例条目（待写入 golden_qa.jsonl）
 
@@ -142,7 +142,7 @@ Content-Type: application/json
 
 ## 6. 结果记录模板
 
-> 以下数值为**目标占位**，实现后替换为真实跑分。
+> 以下数值为**设计目标占位**。`POST /api/v1/eval/run` 已可跑 Baseline RAGAS，结果存 `eval_runs` 表；README 表格待真实跑分后更新。
 
 ### 6.1 主对比表（README 用）
 
@@ -191,4 +191,4 @@ Content-Type: application/json
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
-| v0.1 | 2026-06-14 | 评测框架与 Golden QA 规范 |
+| v0.1 | 2026-06-14 | 标注 Golden QA 12/20；Eval API Baseline 已实现 |

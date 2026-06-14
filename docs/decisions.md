@@ -106,6 +106,15 @@
 
 ---
 
+## 11. 已知实现偏差
+
+| 项 | 文档 | 当前代码 | 计划 |
+|----|------|----------|------|
+| Parent-Child 分块 | ADR-003 | 段落 chunk（`chunker.py`） | P2 收尾或修订 ADR |
+| P1 无 Agent | decisions §5 | P2 Agent 已合并进 main | 以 progress.md 为准 |
+
+---
+
 ## 修订记录
 
 | 日期 | 说明 |

@@ -1,0 +1,12 @@
+{"id":"qa-his-001","question":"门诊挂号需要携带哪些证件？","expected_answer":"需携带身份证或医保卡；外籍患者携带护照；儿童需监护人身份证及户口本或出生医学证明。","doc_refs":["his/outpatient-guide.md"],"category":"his","type":"single_hop","tags":["factual","sop"]}
+{"id":"qa-his-002","question":"当日退号收取多少挂号费？","expected_answer":"当日退号收取50%挂号费。","doc_refs":["his/outpatient-guide.md"],"category":"his","type":"single_hop","tags":["factual"]}
+{"id":"qa-his-003","question":"分诊护士能否直接加号？","expected_answer":"分诊护士可加号，但需主任授权。","doc_refs":["his/outpatient-guide.md"],"category":"his","type":"single_hop","tags":["permission"]}
+{"id":"qa-erp-001","question":"跨境电商全面库存盘点周期是多久？","expected_answer":"每月最后一个工作日进行全面盘点。","doc_refs":["erp/inventory-sop.md"],"category":"erp","type":"single_hop","tags":["factual","sop"]}
+{"id":"qa-erp-002","question":"盘点差异超过多少需要复盘？","expected_answer":"差异超过±2%或金额超过500元须复盘。","doc_refs":["erp/inventory-sop.md"],"category":"erp","type":"single_hop","tags":["factual"]}
+{"id":"qa-erp-003","question":"盘点完成后多久要提交盘点报告？","expected_answer":"盘点完成后24小时内提交盘点报告。","doc_refs":["erp/inventory-sop.md"],"category":"erp","type":"single_hop","tags":["factual"]}
+{"id":"qa-wp-001","question":"P0缺陷的响应时限是多少？","expected_answer":"2小时内响应，24小时内修复或提供workaround。","doc_refs":["workpal/defect-severity.md"],"category":"workpal","type":"single_hop","tags":["factual","sop"]}
+{"id":"qa-wp-002","question":"P1缺陷的修复时限是多久？","expected_answer":"3个工作日内修复或提供workaround。","doc_refs":["workpal/defect-severity.md"],"category":"workpal","type":"single_hop","tags":["factual"]}
+{"id":"qa-wp-003","question":"迭代周期是多长？","expected_answer":"每迭代2周。","doc_refs":["workpal/defect-severity.md"],"category":"workpal","type":"single_hop","tags":["process"]}
+{"id":"qa-multi-001","question":"挂号员和系统管理员在挂号流程中分别有什么权限？","expected_answer":"挂号员负责窗口挂号和退号；系统管理员负责号源维护和权限配置。","doc_refs":["his/outpatient-guide.md"],"category":"his","type":"multi_hop","tags":["permission"]}
+{"id":"qa-rej-001","question":"今天上海天气怎么样？","expected_answer":"该问题不在企业知识库范围内，无法根据内部文档回答。","doc_refs":[],"category":"his","type":"rejection","tags":["oos"]}
+{"id":"qa-rej-002","question":"帮我写一段 Python 快速排序","expected_answer":"该请求超出企业知识助手范围。","doc_refs":[],"category":"workpal","type":"rejection","tags":["oos"]}

@@ -1,0 +1,46 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Virtual env
+.venv/
+backend/.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# Node
+node_modules/
+frontend/dist/
+*.local
+
+# Data & uploads
+data/uploads/
+data/**/*.pdf
+!data/demo_docs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
+
+# Eval outputs
+docs/eval-results.json

@@ -1,0 +1,1 @@
+"""BizMind FastAPI application."""

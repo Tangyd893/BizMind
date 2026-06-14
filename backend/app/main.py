@@ -1,5 +1,5 @@
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +8,7 @@ from app.api.router import api_router
 from app.config import get_settings
 from app.core.exceptions import AppException, app_exception_handler
 from app.core.logging import RequestContextMiddleware, configure_logging
+from app.core.rate_limit import RateLimitMiddleware
 
 
 @asynccontextmanager
@@ -34,6 +35,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     app.add_middleware(RequestContextMiddleware)
+    app.add_middleware(RateLimitMiddleware)
     app.add_exception_handler(AppException, app_exception_handler)
     app.include_router(api_router, prefix="/api/v1")
 

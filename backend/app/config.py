@@ -34,6 +34,17 @@ class Settings(BaseSettings):
     chunk_size: int = Field(default=512, alias="CHUNK_SIZE")
     chunk_overlap: int = Field(default=64, alias="CHUNK_OVERLAP")
     retrieval_top_k: int = Field(default=20, alias="RETRIEVAL_TOP_K")
+    rerank_top_k: int = Field(default=4, alias="RERANK_TOP_K")
+
+    grade_threshold: float = Field(default=0.5, alias="GRADE_THRESHOLD")
+    max_retrieval_retries: int = Field(default=2, alias="MAX_RETRIEVAL_RETRIES")
+    max_critique_retries: int = Field(default=1, alias="MAX_CRITIQUE_RETRIES")
+    web_search_enabled: bool = Field(default=False, alias="WEB_SEARCH_ENABLED")
+
+    cohere_api_key: str = Field(default="", alias="COHERE_API_KEY")
+    tavily_api_key: str = Field(default="", alias="TAVILY_API_KEY")
+
+    rate_limit_per_minute: int = Field(default=60, alias="RATE_LIMIT_PER_MINUTE")
 
     @property
     def is_test(self) -> bool:

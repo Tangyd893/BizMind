@@ -11,19 +11,19 @@ class Base(DeclarativeBase):
     pass
 
 
-class UserRole(str, enum.Enum):
+class UserRole(enum.StrEnum):
     ADMIN = "admin"
     USER = "user"
 
 
-class DocumentStatus(str, enum.Enum):
+class DocumentStatus(enum.StrEnum):
     PENDING = "pending"
     INDEXING = "indexing"
     INDEXED = "indexed"
     FAILED = "failed"
 
 
-class MessageRole(str, enum.Enum):
+class MessageRole(enum.StrEnum):
     USER = "user"
     ASSISTANT = "assistant"
     SYSTEM = "system"
@@ -123,7 +123,9 @@ class Message(Base):
     thread_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("threads.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    role: Mapped[MessageRole] = mapped_column(Enum(MessageRole, name="message_role"), nullable=False)
+    role: Mapped[MessageRole] = mapped_column(
+        Enum(MessageRole, name="message_role"), nullable=False
+    )
     content: Mapped[str] = mapped_column(Text, nullable=False)
     citations: Mapped[dict | list] = mapped_column(JSONB, default=list, nullable=False)
     token_usage: Mapped[dict | None] = mapped_column(JSONB, nullable=True)

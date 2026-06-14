@@ -1,12 +1,11 @@
 from typing import Any
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
-
 from app.config import Settings, get_settings
 from app.dependencies import get_db
 from app.services.health_service import gather_health
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 router = APIRouter(tags=["health"])
 

@@ -1,7 +1,7 @@
 # BizMind — 企业知识智能助手 · 项目设计
 
-> **版本：** v0.3-docs  
-> **状态：** 开发中（P1–P2 基本完成，P4 评测待收尾）  
+> **版本：** v0.4-interview-ready  
+> **状态：** P0 完成，P1 收尾中，P2 加分项  
 > **待办：** 见 [todo0616.md](./todo0616.md)  
 > **目标周期：** 约 8 周（产品级 MVP，可面试演示）
 
@@ -55,11 +55,11 @@ BizMind 以「企业知识场景」为切入点，与已有 HIS/ERP 领域经验
 ### 1.5 成功标准
 
 - [x] GitHub 公开仓库，README 含架构图 + Docker Compose 一键启动
-- [ ] ≥ 3 类企业样例文档 + ≥ 20 条 Golden QA（文档 ✅，QA **12/20**）
+- [x] ≥ 3 类企业样例文档 + ≥ 20 条 Golden QA（4 类文档含 PDF，QA **21/21**）
 - [x] LangGraph Agent 工作流可演示（含 retrieve grade / critique 分支）
-- [ ] RAGAS 评测结果可复现，README 有 benchmark 表格
+- [x] RAGAS 评测结果可复现，README 有 benchmark 表格（faithfulness=0.77）
 - [x] 多租户文档隔离 + 文档版本感知对话（测试覆盖待加强）
-- [ ] 10 分钟内可完成一次完整面试 Demo（需配置 LLM Key + seed）
+- [x] 10 分钟内可完成一次完整面试 Demo（`scripts/demo.ps1`）
 
 ---
 
@@ -516,9 +516,9 @@ data: {"code": "RATE_LIMIT", "message": "..."}
 | Phase | 周期 | 交付 | 状态 |
 |-------|------|------|------|
 | **P1 基础 RAG** | 第 1–2 周 | Auth、文档上传索引、Baseline RAG、最小 UI | ~95% |
-| **P2 Agent 工作流** | 第 3–4 周 | LangGraph、Hybrid+ Rerank、SSE、多轮记忆 | ~85% |
-| **P3 生产特性** | 第 5–6 周 | 多租户、版本感知、Web Fallback、Redis 缓存限流 | ~55% |
-| **P4 评测与包装** | 第 7–8 周 | RAGAS、Langfuse、Docker、README、面试文档 | ~35% |
+| **P2 Agent 工作流** | 第 3–4 周 | LangGraph、Hybrid+ Rerank、SSE、多轮记忆 | ~95% |
+| **P3 生产特性** | 第 5–6 周 | 多租户、版本感知、Web Fallback、Redis 缓存限流 | ~80% |
+| **P4 评测与包装** | 第 7–8 周 | RAGAS、Langfuse、Docker、README、面试文档 | ~60% |
 
 详情：[todo0616.md](./todo0616.md)
 
@@ -720,3 +720,4 @@ README 中展示表格：
 | v0.1-scaffold | 2026-06-14 | 开写前规范、CI、Docker、backend/frontend 脚手架 |
 | v0.2-progress | 2026-06-14 | 完成度审计；P1/P2 主体实现 |
 | v0.3-docs | 2026-06-16 | 文档精简为 design/api/dev/todo |
+| v0.4-interview-ready | 2026-06-16 | P0 收尾：RAGAS benchmark + Demo 脚本 + PDF 解析 + tag |

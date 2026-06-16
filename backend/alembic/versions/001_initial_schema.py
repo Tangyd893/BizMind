@@ -17,12 +17,12 @@ down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-user_role = postgresql.ENUM("admin", "user", name="user_role", create_type=True)
+user_role = postgresql.ENUM("admin", "user", name="user_role", create_type=False)
 document_status = postgresql.ENUM(
-    "pending", "indexing", "indexed", "failed", name="document_status", create_type=True
+    "pending", "indexing", "indexed", "failed", name="document_status", create_type=False
 )
 message_role = postgresql.ENUM(
-    "user", "assistant", "system", name="message_role", create_type=True
+    "user", "assistant", "system", name="message_role", create_type=False
 )
 
 

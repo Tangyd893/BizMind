@@ -6,6 +6,25 @@ Invoked as a FastAPI BackgroundTask after document upload.
 import os
 import uuid
 
+
+def _extract_pdf_text(file_path: str) -> str:
+    """Extract text from a PDF file using PyMuPDF (fitz)."""
+    import fitz  # PyMuPDF
+
+    text_parts: list[str] = []
+    doc = fitz.open(file_path)
+    try:
+        for page in doc:
+            text = page.get_text()
+            if text.strip():
+                text_parts.append(text.strip())
+    finally:
+        doc.close()
+
+    if not text_parts:
+        raise ValueError(f"PDF contains no extractable text: {file_path}")
+    return "\n\n".join(text_parts)
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -48,8 +67,12 @@ async def _index_document(session: AsyncSession, document_id: str) -> None:
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Document file not found: {file_path}")
 
-    with open(file_path, encoding="utf-8") as f:
-        text = f.read()
+    # Extract text based on mime type
+    if doc.mime_type == "application/pdf":
+        text = _extract_pdf_text(file_path)
+    else:
+        with open(file_path, encoding="utf-8") as f:
+            text = f.read()
 
     # Chunk (parent-child per ADR-003)
     chunk_result = chunk_document(text)

@@ -27,6 +27,7 @@ dependencies = [
     "ragas>=0.4.3",
     "langchain-google-vertexai>=3.2.4",
     "langchain-community<0.4",
+    "pymupdf>=1.27.2.3",
 ]
 
 [project.optional-dependencies]

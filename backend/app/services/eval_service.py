@@ -58,7 +58,7 @@ async def _run_baseline_eval(
 
     for i, qa in enumerate(qa_pairs):
         question = qa["question"]
-        _ground_truth = qa.get("answer", "")
+        _ground_truth = qa.get("expected_answer", qa.get("answer", ""))
 
         # Retrieve
         result = await retrieve(question, tenant_id)
@@ -181,7 +181,7 @@ async def _run_agent_eval(
 
     for i, qa in enumerate(qa_pairs):
         question = qa["question"]
-        _ground_truth = qa.get("answer", "")
+        _ground_truth = qa.get("expected_answer", qa.get("answer", ""))
 
         # Use hybrid retriever for agent mode
         from app.rag.retriever import hybrid_retrieve

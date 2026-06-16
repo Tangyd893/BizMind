@@ -90,16 +90,19 @@ async def list_documents(
     status_filter: str | None = None,
 ) -> tuple[list[DocumentResponse], int]:
     """List documents for a tenant with optional status filter."""
+    from uuid import UUID
+
     from sqlalchemy import func, select
 
-    stmt = select(Document).where(Document.tenant_id == tenant_id)
+    tenant_uuid = UUID(tenant_id)
+    stmt = select(Document).where(Document.tenant_id == tenant_uuid)
     if status_filter:
         stmt = stmt.where(Document.status == status_filter)
     stmt = stmt.order_by(Document.created_at.desc())
 
     # Count
     count_stmt = select(func.count()).select_from(Document).where(
-        Document.tenant_id == tenant_id
+        Document.tenant_id == tenant_uuid
     )
     if status_filter:
         count_stmt = count_stmt.where(Document.status == status_filter)
@@ -120,12 +123,14 @@ async def get_document(
     tenant_id: str,
 ) -> DocumentResponse:
     """Get a single document, scoped to tenant."""
+    from uuid import UUID
+
     from sqlalchemy import select
 
     result = await session.execute(
         select(Document).where(
-            Document.id == document_id,
-            Document.tenant_id == tenant_id,
+            Document.id == UUID(document_id),
+            Document.tenant_id == UUID(tenant_id),
         )
     )
     doc = result.scalar_one_or_none()
@@ -143,12 +148,14 @@ async def delete_document(
     """Delete a document, its file, Qdrant vectors, and bump version."""
     import os as _os
 
+    from uuid import UUID
+
     from sqlalchemy import select
 
     result = await session.execute(
         select(Document).where(
-            Document.id == document_id,
-            Document.tenant_id == tenant_id,
+            Document.id == UUID(document_id),
+            Document.tenant_id == UUID(tenant_id),
         )
     )
     doc = result.scalar_one_or_none()

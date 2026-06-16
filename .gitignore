@@ -45,6 +45,9 @@ Thumbs.db
 # Eval outputs
 docs/eval-results.json
 
+# Test DB (sqlite fallback)
+backend/test.db
+
 # Tooling / build artifacts
 .reasonix/
 *.tsbuildinfo

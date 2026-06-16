@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: bizmind
       POSTGRES_DB: bizmind
     ports:
-      - "5432:5432"
+      - "5433:5432"  # 5433 avoids conflict with local PostgreSQL on Windows/macOS
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:

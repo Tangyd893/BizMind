@@ -71,13 +71,21 @@ curl http://localhost:8000/api/v1/health
 
 ```bash
 cd backend
-make infra-up && uv run alembic upgrade head   # 集成测试需要 PG
-uv run pytest tests/ -q --cov=app
+uv run pytest tests/ -q --cov=app --cov-fail-under=50   # 默认 SQLite，无需 Docker
+```
+
+可选：用 Docker PostgreSQL 跑集成测试（宿主机端口 **5433**，避免与本地 PostgreSQL 5432 冲突）：
+
+```bash
+make infra-up
+docker exec bizmind-postgres-1 psql -U bizmind -d bizmind -c "CREATE DATABASE bizmind_test"
+DATABASE_URL=postgresql+asyncpg://bizmind:bizmind@127.0.0.1:5433/bizmind_test \
+  uv run pytest tests/ -q
 ```
 
 | 阶段 | 覆盖率目标 |
 |------|------------|
-| 当前 | ≥ 50% |
+| 当前 | ≥ 50%（已达 ~55%） |
 | P2 结束 | ≥ 70% |
 
 CI 使用 mock LLM，不消耗 API 额度。

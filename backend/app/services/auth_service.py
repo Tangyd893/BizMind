@@ -1,7 +1,9 @@
+import uuid
 from datetime import UTC, datetime, timedelta
+from uuid import UUID
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,15 +12,13 @@ from app.core.exceptions import ConflictError, UnauthorizedError
 from app.models import Tenant, User
 from app.schemas.auth import AuthResponse, LoginRequest, RegisterRequest, UserResponse
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def _hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
 def _verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 
 def _create_token(user: User) -> tuple[str, int]:
@@ -93,7 +93,7 @@ async def get_current_user(
     if user_id is None:
         raise UnauthorizedError("Invalid token payload")
 
-    result = await session.execute(select(User).where(User.id == user_id))
+    result = await session.execute(select(User).where(User.id == uuid.UUID(user_id)))
     user = result.scalar_one_or_none()
     if user is None:
         raise UnauthorizedError("User not found")

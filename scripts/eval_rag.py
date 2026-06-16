@@ -50,7 +50,7 @@ async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
 
     for i, qa in enumerate(qa_pairs):
         question = qa["question"]
-        ground_truth = qa.get("answer", "")
+        ground_truth = qa.get("expected_answer", qa.get("answer", ""))
 
         # Retrieve
         if mode == "agent":

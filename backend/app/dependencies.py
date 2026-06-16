@@ -16,13 +16,13 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def get_current_user(
-    authorization: str = Header(..., description="Bearer <token>"),
+    authorization: str | None = Header(None, description="Bearer <token>"),
     session: AsyncSession = Depends(get_db),
 ):
     """Extract and validate the current user from the Bearer token."""
     from app.services.auth_service import get_current_user as _resolve_user
 
-    if not authorization.startswith("Bearer "):
+    if not authorization or not authorization.startswith("Bearer "):
         raise UnauthorizedError("Missing or invalid Authorization header")
 
     token = authorization.removeprefix("Bearer ").strip()

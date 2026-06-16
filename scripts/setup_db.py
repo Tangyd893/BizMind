@@ -20,7 +20,7 @@ DB_NAME = "bizmind"
 DB_USER = "bizmind"
 DB_PASS = "bizmind"
 HOST = "127.0.0.1"
-PORT = 5432
+PORT = 5433
 SUPERUSER = "postgres"
 
 

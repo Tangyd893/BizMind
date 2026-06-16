@@ -3,7 +3,7 @@
 > **版本：** v0.1  
 > **Base URL：** `/api/v1`  
 > **OpenAPI：** 实现阶段由 FastAPI 自动生成 `/docs`  
-> **关联：** [requirements](./requirements.md) · [项目设计 §6](./项目设计.md#6-api-设计概要)
+> **关联：** [design.md §6](./design.md#6-api-设计概要) · 实现以 `/docs` OpenAPI 为准
 
 ---
 

@@ -44,3 +44,7 @@ Thumbs.db
 
 # Eval outputs
 docs/eval-results.json
+
+# Tooling / build artifacts
+.reasonix/
+*.tsbuildinfo

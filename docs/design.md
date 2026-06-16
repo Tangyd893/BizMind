@@ -1,8 +1,8 @@
 # BizMind — 企业知识智能助手 · 项目设计
 
-> **版本：** v0.2-progress  
-> **状态：** 开发中（P1 基本完成，P2 主体已实现，P4 待收尾）  
-> **完成度：** 见 [progress.md](./progress.md)  
+> **版本：** v0.3-docs  
+> **状态：** 开发中（P1–P2 基本完成，P4 评测待收尾）  
+> **待办：** 见 [todo0616.md](./todo0616.md)  
 > **目标周期：** 约 8 周（产品级 MVP，可面试演示）
 
 ---
@@ -245,13 +245,11 @@ BizMind/
 ├── docker-compose.yml
 ├── docker-compose.observability.yml   # Langfuse 可选栈
 │
-├── docs/                              # 设计 & 运维文档
-│   ├── 项目设计.md                    # 本文档
-│   ├── architecture.md                # 架构详图（英文，可放 Mermaid）
-│   ├── api-spec.md                    # REST API 约定
-│   ├── agent-workflow.md              # LangGraph 节点说明
-│   ├── eval-benchmark.md              # Golden QA 与 RAGAS 结果
-│   └── interview-talking-points.md    # 面试叙事提纲
+├── docs/                              # 核心文档（见 docs/README.md）
+│   ├── design.md                      # 本文档
+│   ├── api.md                         # REST + SSE
+│   ├── dev.md                         # 开发部署
+│   └── todo0616.md                    # 待办
 │
 ├── backend/
 │   ├── pyproject.toml                 # uv / Poetry 依赖
@@ -511,7 +509,7 @@ data: {"code": "RATE_LIMIT", "message": "..."}
 
 ## 7. 软件工程设计
 
-> 详细文档：[development-guide.md](./development-guide.md) · [test-plan.md](./test-plan.md) · [deployment.md](./deployment.md) · [requirements.md](./requirements.md)
+> 开发、部署、测试细则见 [dev.md](./dev.md)。
 
 ### 7.1 开发阶段划分
 
@@ -522,7 +520,7 @@ data: {"code": "RATE_LIMIT", "message": "..."}
 | **P3 生产特性** | 第 5–6 周 | 多租户、版本感知、Web Fallback、Redis 缓存限流 | ~55% |
 | **P4 评测与包装** | 第 7–8 周 | RAGAS、Langfuse、Docker、README、面试文档 | ~35% |
 
-详情：[progress.md](./progress.md)
+详情：[todo0616.md](./todo0616.md)
 
 ### 7.2 分支策略
 
@@ -692,9 +690,7 @@ README 中展示表格：
 2. **技术亮点：** LangGraph 条件工作流、Hybrid Retrieval、文档版本感知、RAGAS 量化。
 3. **工程亮点：** 多租户隔离、SSE 流式、Redis 缓存、Docker 一键部署、CI 测试。
 4. **权衡举例：** Agent 延迟 vs 准确率；Parent-Child vs Fixed Chunk。
-5. **下一步：** MCP 导出、与 WorkPal 工单 API 联动（Mock）。
-
-详细版见后续文档 [`interview-talking-points.md`](./interview-talking-points.md)。
+5. **下一步：** 见 [todo0616.md](./todo0616.md)
 
 ---
 
@@ -707,26 +703,13 @@ README 中展示表格：
 
 ### 11.2 文档索引
 
-完整导航见 [docs/README.md](./README.md)。
-
-| 文档 | 状态 | 说明 |
-|------|------|------|
-| `项目设计.md` | ✅ 本文 | 总体设计 (SDD) |
-| `requirements.md` | ✅ | 软件需求规格 (SRS) |
-| `architecture.md` | ✅ | Mermaid 架构详图 |
-| `database-schema.md` | ✅ | PostgreSQL / Qdrant / Redis 设计 |
-| `api-spec.md` | ✅ | REST + SSE 接口规范 |
-| `agent-workflow.md` | ✅ | LangGraph 节点、Prompt、测试矩阵 |
-| `development-guide.md` | ✅ | 开发环境与分支规范 |
-| `test-plan.md` | ✅ | 测试分层与用例 |
-| `deployment.md` | ✅ | Docker 部署与故障排查 |
-| `eval-benchmark.md` | ✅ 📋 | Golden QA 规范（跑分待实现后填入） |
-| `p1-backlog.md` | ✅ | P1 任务拆解（已标注完成度） |
-| `progress.md` | ✅ | **项目完成度报告** |
-| `decisions.md` | ✅ | 编码前工程决策定稿 |
-| `coding-standards.md` | ✅ | 编码规范 |
-| `adr/` | ✅ | ADR-001 ~ ADR-005 |
-| 根目录 `CONTRIBUTING.md` | ✅ | 协作与 DoD |
+| 文档 | 说明 |
+|------|------|
+| [design.md](./design.md) | 本文 — 总体设计 |
+| [api.md](./api.md) | 接口规范 |
+| [dev.md](./dev.md) | 开发、部署、规范 |
+| [todo0616.md](./todo0616.md) | 完成度与待办 |
+| [CONTRIBUTING.md](../CONTRIBUTING.md) | 协作与 PR |
 
 ### 11.3 修订记录
 
@@ -735,4 +718,5 @@ README 中展示表格：
 | v0.1-design | 2026-06-14 | 初始设计文档 |
 | v0.1-design-doc | 2026-06-14 | 补全 SRS、架构、API、测试、部署等工程文档体系 |
 | v0.1-scaffold | 2026-06-14 | 开写前规范、CI、Docker、backend/frontend 脚手架 |
-| v0.2-progress | 2026-06-14 | 完成度审计；P1/P2 主体实现；新增 progress.md |
+| v0.2-progress | 2026-06-14 | 完成度审计；P1/P2 主体实现 |
+| v0.3-docs | 2026-06-16 | 文档精简为 design/api/dev/todo |

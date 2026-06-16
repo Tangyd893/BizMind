@@ -17,12 +17,12 @@ down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-user_role = postgresql.ENUM("admin", "user", name="user_role", create_type=False)
+user_role = postgresql.ENUM("ADMIN", "USER", name="user_role", create_type=False)
 document_status = postgresql.ENUM(
-    "pending", "indexing", "indexed", "failed", name="document_status", create_type=False
+    "PENDING", "INDEXING", "INDEXED", "FAILED", name="document_status", create_type=False
 )
 message_role = postgresql.ENUM(
-    "user", "assistant", "system", name="message_role", create_type=False
+    "USER", "ASSISTANT", "SYSTEM", name="message_role", create_type=False
 )
 
 
@@ -43,7 +43,7 @@ def upgrade() -> None:
         sa.Column("tenant_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("tenants.id"), nullable=False),
         sa.Column("email", sa.String(255), nullable=False),
         sa.Column("password_hash", sa.String(255), nullable=False),
-        sa.Column("role", user_role, nullable=False, server_default="user"),
+        sa.Column("role", user_role, nullable=False, server_default="USER"),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
     )
     op.create_index("ix_users_tenant_id", "users", ["tenant_id"])
@@ -58,7 +58,7 @@ def upgrade() -> None:
         sa.Column("mime_type", sa.String(128), nullable=False),
         sa.Column("storage_path", sa.String(1024), nullable=False),
         sa.Column("content_hash", sa.String(64), nullable=True),
-        sa.Column("status", document_status, nullable=False, server_default="pending"),
+        sa.Column("status", document_status, nullable=False, server_default="PENDING"),
         sa.Column("chunk_count", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("documents_version", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("error_message", sa.Text(), nullable=True),

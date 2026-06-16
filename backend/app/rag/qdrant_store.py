@@ -14,7 +14,7 @@ class QdrantStore:
         settings = get_settings()
         self._client = AsyncQdrantClient(url=settings.qdrant_url)
         self._collection = settings.qdrant_collection
-        self._vector_size = 1536  # text-embedding-3-small dimension
+        self._vector_size = settings.embedding_dim
 
     async def ensure_collection(self) -> None:
         """Create the collection if it doesn't already exist."""
@@ -96,9 +96,9 @@ class QdrantStore:
         """Search for the most similar chunks, filtered by tenant."""
         await self.ensure_collection()
 
-        results = await self._client.search(
+        results = await self._client.query_points(
             collection_name=self._collection,
-            query_vector=query_vector,
+            query=query_vector,
             query_filter=models.Filter(
                 must=[
                     models.FieldCondition(
@@ -117,7 +117,7 @@ class QdrantStore:
                 "score": r.score,
                 **r.payload,
             }
-            for r in results
+            for r in results.points
         ]
 
 

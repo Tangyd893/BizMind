@@ -38,7 +38,11 @@ class Settings(BaseSettings):
     llm_base_url: str = Field(default="https://api.openai.com/v1", alias="LLM_BASE_URL")
     llm_model: str = Field(default="gpt-4o-mini", alias="LLM_MODEL")
 
+    embedding_api_key: str = Field(default="", alias="EMBEDDING_API_KEY")
+    embedding_base_url: str = Field(default="", alias="EMBEDDING_BASE_URL")
     embedding_model: str = Field(default="text-embedding-3-small", alias="EMBEDDING_MODEL")
+    embedding_provider: str = Field(default="openai", alias="EMBEDDING_PROVIDER")
+    embedding_dim: int = Field(default=1024, alias="EMBEDDING_DIM")
     chunk_size: int = Field(default=512, alias="CHUNK_SIZE")
     chunk_overlap: int = Field(default=64, alias="CHUNK_OVERLAP")
     parent_chunk_size: int = Field(default=2048, alias="PARENT_CHUNK_SIZE")

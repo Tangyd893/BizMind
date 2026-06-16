@@ -15,8 +15,10 @@ class EmbeddingClient:
 
     def __init__(self) -> None:
         settings = get_settings()
-        self._base_url = settings.llm_base_url.rstrip("/")
-        self._api_key = settings.llm_api_key
+        # Use dedicated embedding config when available, otherwise fall back to LLM config
+        self._api_key = settings.embedding_api_key or settings.llm_api_key
+        embed_base = settings.embedding_base_url or settings.llm_base_url
+        self._base_url = embed_base.rstrip("/")
         self._model = settings.embedding_model
 
     async def embed(self, texts: list[str]) -> list[list[float]]:

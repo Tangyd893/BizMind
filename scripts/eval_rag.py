@@ -15,7 +15,15 @@ import asyncio
 import json
 import time
 
-DEMO_TENANT_ID = "00000000-0000-0000-0000-000000000001"
+async def _get_demo_tenant_id() -> str:
+    """Resolve the demo tenant ID at runtime."""
+    from app.db.session import AsyncSessionLocal
+    from sqlalchemy import text
+
+    async with AsyncSessionLocal() as s:
+        r = await s.execute(text("SELECT id FROM tenants WHERE name = 'Demo Corp' LIMIT 1"))
+        row = r.fetchone()
+        return str(row[0]) if row else "00000000-0000-0000-0000-000000000001"
 
 
 async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
@@ -41,12 +49,14 @@ async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
     if sample_limit:
         qa_pairs = qa_pairs[:sample_limit]
 
-    print(f"Running {mode} eval on {len(qa_pairs)} QA pairs...")
+    demo_tenant_id = await _get_demo_tenant_id()
+    print(f"Running {mode} eval on {len(qa_pairs)} QA pairs (tenant={demo_tenant_id})...")
     start = time.perf_counter()
 
     questions = []
     answers = []
     contexts_list = []
+    ground_truths = []
 
     for i, qa in enumerate(qa_pairs):
         question = qa["question"]
@@ -54,9 +64,9 @@ async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
 
         # Retrieve
         if mode == "agent":
-            result = await hybrid_retrieve(question, DEMO_TENANT_ID)
+            result = await hybrid_retrieve(question, demo_tenant_id)
         else:
-            result = await retrieve(question, DEMO_TENANT_ID)
+            result = await retrieve(question, demo_tenant_id)
         context_texts = [c.text_preview for c in result.chunks]
 
         # Generate
@@ -74,6 +84,7 @@ async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
         questions.append(question)
         answers.append(answer)
         contexts_list.append(context_texts)
+        ground_truths.append(ground_truth)
 
         # Progress
         elapsed = time.perf_counter() - start
@@ -87,24 +98,56 @@ async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
     try:
         from ragas import evaluate
         from ragas.metrics import faithfulness, answer_relevancy, context_precision, context_recall
+        from ragas.llms import LangchainLLMWrapper
+        from langchain_openai import ChatOpenAI, OpenAIEmbeddings
         from datasets import Dataset
+
+        # Configure RAGAS LLM and Embeddings to use the same providers as the app
+        cfg = get_settings()
+        eval_llm = LangchainLLMWrapper(ChatOpenAI(
+            model=cfg.llm_model,
+            openai_api_key=cfg.llm_api_key,
+            openai_api_base=cfg.llm_base_url,
+            temperature=0,
+        ))
+        eval_embeddings = OpenAIEmbeddings(
+            model=cfg.embedding_model,
+            openai_api_key=cfg.embedding_api_key or cfg.llm_api_key,
+            openai_api_base=cfg.embedding_base_url or cfg.llm_base_url,
+        )
 
         dataset = Dataset.from_dict({
             "question": questions,
             "answer": answers,
             "contexts": contexts_list,
+            "reference": ground_truths,
         })
         result = evaluate(
             dataset,
             metrics=[faithfulness, answer_relevancy, context_precision, context_recall],
+            llm=eval_llm,
+            embeddings=eval_embeddings,
         )
 
-        metrics = {
-            "faithfulness": round(float(result.get("faithfulness", 0.0) or 0.0), 4),
-            "answer_relevancy": round(float(result.get("answer_relevancy", 0.0) or 0.0), 4),
-            "context_precision": round(float(result.get("context_precision", 0.0) or 0.0), 4),
-            "context_recall": round(float(result.get("context_recall", 0.0) or 0.0), 4),
-        }
+        # Convert EvaluationResult to dict (handle different ragas versions)
+        try:
+            df = result.to_pandas()
+            # Compute mean of each metric column
+            metrics = {}
+            for key in ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]:
+                if key in df.columns:
+                    metrics[key] = round(float(df[key].mean()), 4)
+                else:
+                    metrics[key] = 0.0
+        except Exception:
+            # Fallback: try dict-like access
+            metrics = {}
+            for key in ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]:
+                try:
+                    metrics[key] = round(float(result[key]), 4)
+                except (KeyError, TypeError):
+                    metrics[key] = 0.0
+
         print(f"\n=== {mode.upper()} RAGAS Results ===")
         print(json.dumps(metrics, indent=2))
 
@@ -122,6 +165,8 @@ async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
         out_path.write_text(json.dumps(existing, indent=2))
         print(f"\nResults saved to {out_path}")
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print(f"RAGAS evaluation failed: {e}")
         return 1
 

@@ -14,6 +14,8 @@ class TestLoadDataset:
 
     def test_load_valid_jsonl(self, tmp_path, monkeypatch):
         """Should parse a valid JSONL file."""
+        uploads = tmp_path / "uploads"
+        uploads.mkdir()
         jsonl_path = tmp_path / "golden_qa.jsonl"
         jsonl_path.write_text(
             '{"question": "Q1", "expected_answer": "A1"}\n'
@@ -21,9 +23,8 @@ class TestLoadDataset:
             encoding="utf-8",
         )
 
-        # Override storage_path so dataset is resolved relative to tmp_path
         from app.config import get_settings
-        monkeypatch.setattr(get_settings(), "storage_path", str(tmp_path))
+        monkeypatch.setattr(get_settings(), "storage_path", str(uploads))
 
         result = _load_dataset()
         assert len(result) == 2
@@ -32,19 +33,24 @@ class TestLoadDataset:
 
     def test_load_empty_file(self, tmp_path, monkeypatch):
         """Empty file → empty list."""
+        uploads = tmp_path / "uploads"
+        uploads.mkdir()
         jsonl_path = tmp_path / "golden_qa.jsonl"
         jsonl_path.write_text("", encoding="utf-8")
 
         from app.config import get_settings
-        monkeypatch.setattr(get_settings(), "storage_path", str(tmp_path))
+        monkeypatch.setattr(get_settings(), "storage_path", str(uploads))
 
         result = _load_dataset()
         assert result == []
 
     def test_load_missing_file(self, tmp_path, monkeypatch):
         """Missing file → empty list."""
+        uploads = tmp_path / "uploads"
+        uploads.mkdir()
+
         from app.config import get_settings
-        monkeypatch.setattr(get_settings(), "storage_path", str(tmp_path))
+        monkeypatch.setattr(get_settings(), "storage_path", str(uploads))
 
         result = _load_dataset()
         assert result == []
@@ -63,14 +69,19 @@ class TestLoadDataset:
 
     def test_load_with_custom_name_nonexistent_file(self, tmp_path, monkeypatch):
         """Custom name that doesn't exist → falls back to default, then empty."""
+        uploads = tmp_path / "uploads"
+        uploads.mkdir()
+
         from app.config import get_settings
-        monkeypatch.setattr(get_settings(), "storage_path", str(tmp_path))
+        monkeypatch.setattr(get_settings(), "storage_path", str(uploads))
 
         result = _load_dataset(name="nonexistent_file.jsonl")
         assert result == []
 
     def test_load_skips_blank_lines(self, tmp_path, monkeypatch):
         """Blank lines in JSONL are skipped."""
+        uploads = tmp_path / "uploads"
+        uploads.mkdir()
         jsonl_path = tmp_path / "golden_qa.jsonl"
         jsonl_path.write_text(
             '{"question": "Q1", "expected_answer": "A1"}\n'
@@ -80,7 +91,7 @@ class TestLoadDataset:
         )
 
         from app.config import get_settings
-        monkeypatch.setattr(get_settings(), "storage_path", str(tmp_path))
+        monkeypatch.setattr(get_settings(), "storage_path", str(uploads))
 
         result = _load_dataset()
         assert len(result) == 2

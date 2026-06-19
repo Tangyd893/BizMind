@@ -50,7 +50,7 @@ class LLMClient:
             response.raise_for_status()
             async for line in response.aiter_lines():
                 if line.startswith("data: "):
-                    data = line.removeprefix("data: ")
+                    data = line.removeprefix("data: ").strip()
                     if data == "[DONE]":
                         return
                     import json

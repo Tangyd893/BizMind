@@ -122,7 +122,7 @@ async def test_stream_agent_chat_yields_agent_steps_and_tokens(mock_user, mock_s
     ])
 
     with (
-        patch("app.services.agent_chat_service.AsyncSessionLocal", return_value=mock_session_factory),
+        patch("app.db.session.AsyncSessionLocal", return_value=mock_session_factory),
         patch("app.services.agent_chat_service.save_message", return_value=mock_saved_message),
         patch("app.services.agent_chat_service.build_agent_graph", return_value=mock_graph),
     ):
@@ -153,7 +153,7 @@ async def test_stream_agent_chat_yields_error_on_exception(mock_user):
     mock_session_factory.__aenter__.return_value = mock_session
 
     with (
-        patch("app.services.agent_chat_service.AsyncSessionLocal", return_value=mock_session_factory),
+        patch("app.db.session.AsyncSessionLocal", return_value=mock_session_factory),
         patch("app.services.agent_chat_service.save_message", side_effect=RuntimeError("DB down")),
     ):
         events = []
@@ -181,7 +181,7 @@ async def test_stream_agent_chat_done_has_metadata(mock_user, mock_saved_message
     ])
 
     with (
-        patch("app.services.agent_chat_service.AsyncSessionLocal", return_value=mock_session_factory),
+        patch("app.db.session.AsyncSessionLocal", return_value=mock_session_factory),
         patch("app.services.agent_chat_service.save_message", return_value=mock_saved_message),
         patch("app.services.agent_chat_service.build_agent_graph", return_value=mock_graph),
     ):
@@ -208,7 +208,7 @@ async def test_stream_agent_chat_saves_user_message_first(mock_user, mock_saved_
     mock_graph.astream.return_value = _AsyncIter([])
 
     with (
-        patch("app.services.agent_chat_service.AsyncSessionLocal", return_value=mock_session_factory),
+        patch("app.db.session.AsyncSessionLocal", return_value=mock_session_factory),
         patch("app.services.agent_chat_service.save_message") as mock_save,
         patch("app.services.agent_chat_service.build_agent_graph", return_value=mock_graph),
     ):
@@ -217,8 +217,10 @@ async def test_stream_agent_chat_saves_user_message_first(mock_user, mock_saved_
         async for event_str in stream_agent_chat(mock_user, "thread-1", "hello world"):
             events.append(event_str)
 
+    from app.models import MessageRole
+
     # First call should save USER message
     assert mock_save.call_count >= 2
     first_call_args = mock_save.call_args_list[0][0]
-    assert first_call_args[2] == "USER"  # MessageRole.USER
+    assert first_call_args[2] == MessageRole.USER
     assert first_call_args[3] == "hello world"

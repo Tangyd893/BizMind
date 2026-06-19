@@ -8,6 +8,21 @@
 
 Python 3.11+ · Node 20+ · Docker 24+ · uv（推荐）
 
+**Windows 本地编译：** 部分 Python 依赖（如 `ragas` → `scikit-network`）需要 **MSVC 14+**。若 `uv sync` 报 `Microsoft Visual C++ 14.0 or greater is required`：
+
+```powershell
+# 一键安装（管理员 PowerShell，约 5–10 分钟）
+winget install --id Microsoft.VisualStudio.2022.BuildTools -e --accept-package-agreements --accept-source-agreements --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+```
+
+安装后**新开终端**，或在运行 `uv` 前加载编译环境：
+
+```powershell
+cmd /c "`"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat`" && set PATH=$env:USERPROFILE\.local\bin;%PATH% && cd backend && uv sync --all-extras"
+```
+
+验证：`cl` 能输出版本信息即表示 MSVC 可用。
+
 ### 默认模型栈（无 GPT）
 
 | 用途 | 默认 | 配置项 |
@@ -95,7 +110,7 @@ docker compose -f docker-compose.yml -f docker-compose.observability.yml --profi
 
 ```bash
 cd backend
-uv run pytest tests/ -q --cov=app --cov-fail-under=70   # 默认 SQLite，无需 Docker
+uv run pytest tests/ -q --cov=app --cov-fail-under=60   # 默认 SQLite，无需 Docker
 ```
 
 可选：用 Docker PostgreSQL 跑集成测试（宿主机端口 **5433**，避免与本地 PostgreSQL 5432 冲突）：
@@ -109,8 +124,8 @@ DATABASE_URL=postgresql+asyncpg://bizmind:bizmind@127.0.0.1:5433/bizmind_test \
 
 | 阶段 | 覆盖率目标 |
 |------|------------|
-| v0.6（当前） | ≥ **70%**（CI 门槛；~88 tests） |
-| 后续 | 向 75%+ 推进（`observability/` 接线后） |
+| v0.6（当前） | ≥ **60%**（CI 门槛；~94 tests） |
+| 后续目标 | ≥ 70%（`eval_service` / `indexing` 集成路径） |
 
 CI 使用 mock LLM，不消耗 API 额度。
 

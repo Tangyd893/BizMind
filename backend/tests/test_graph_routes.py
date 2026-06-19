@@ -98,10 +98,12 @@ def test_route_after_rewrite_at_limit_web_enabled():
         cfg.get_settings().web_search_enabled = original
 
 
-def test_route_after_rewrite_at_limit_web_disabled():
+def test_route_after_rewrite_at_limit_web_disabled(monkeypatch):
     """At max retries, web_search_enabled=False → generate."""
     from app.config import get_settings
+
     limit = get_settings().max_retrieval_retries
+    monkeypatch.setattr(get_settings(), "web_search_enabled", False)
     assert _route_after_rewrite({"retrieval_attempts": limit}) == "generate"
 
 
@@ -152,6 +154,7 @@ def test_build_agent_graph_compiles():
     assert hasattr(graph, "nodes")
     node_names = list(graph.nodes.keys())
     expected_nodes = {
+        "__start__",
         "router", "retrieve", "grade", "rewrite", "web_search",
         "generate", "critique", "direct_answer", "oos_answer",
     }

@@ -8,6 +8,16 @@
 
 Python 3.11+ · Node 20+ · Docker 24+ · uv（推荐）
 
+### 默认模型栈（无 GPT）
+
+| 用途 | 默认 | 配置项 |
+|------|------|--------|
+| LLM | DeepSeek Chat | `LLM_API_KEY` / `LLM_BASE_URL` / `LLM_MODEL` |
+| Embedding | SiliconFlow BGE-M3 | `EMBEDDING_API_KEY` / `EMBEDDING_BASE_URL` / `EMBEDDING_MODEL` |
+| Rerank | 本地 Dense+BM25 融合 | `RERANK_PROVIDER=local`；有 Key 可切 Cohere |
+
+均为 **OpenAI 兼容 API**，无需 GPT 账号。RAGAS 评测在 DeepSeek 下 `answer_relevancy` / `context_*` 可能偏低（`n=1` 限制），**faithfulness ~0.70 为主要参考**。
+
 ---
 
 ## 2. 本地开发
@@ -38,6 +48,20 @@ cd backend && uv run python ../scripts/seed_demo_docs.py
 docker compose up -d --build
 curl http://localhost:8000/api/v1/health
 # 前端 http://localhost:3000
+```
+
+### Langfuse 可观测（可选）
+
+```bash
+# 创建 Langfuse 数据库（首次）
+docker compose up -d postgres
+docker exec bizmind-postgres-1 psql -U bizmind -c "CREATE DATABASE bizmind_langfuse"
+
+# 启动 Langfuse
+docker compose -f docker-compose.yml -f docker-compose.observability.yml --profile observability up -d
+
+# .env 中设置 LANGFUSE_ENABLED=true 并填入 UI 中的 Key
+# 可选安装 SDK：cd backend && uv sync --extra observability
 ```
 
 ---
@@ -71,7 +95,7 @@ curl http://localhost:8000/api/v1/health
 
 ```bash
 cd backend
-uv run pytest tests/ -q --cov=app --cov-fail-under=60   # 默认 SQLite，无需 Docker
+uv run pytest tests/ -q --cov=app --cov-fail-under=70   # 默认 SQLite，无需 Docker
 ```
 
 可选：用 Docker PostgreSQL 跑集成测试（宿主机端口 **5433**，避免与本地 PostgreSQL 5432 冲突）：
@@ -85,8 +109,8 @@ DATABASE_URL=postgresql+asyncpg://bizmind:bizmind@127.0.0.1:5433/bizmind_test \
 
 | 阶段 | 覆盖率目标 |
 |------|------------|
-| v0.5（当前） | ≥ 60%（CI 门槛；~76 tests） |
-| v0.6 目标 | ≥ 70% |
+| v0.6（当前） | ≥ **70%**（CI 门槛；~88 tests） |
+| 后续 | 向 75%+ 推进（`observability/` 接线后） |
 
 CI 使用 mock LLM，不消耗 API 额度。
 
@@ -111,9 +135,9 @@ CI 使用 mock LLM，不消耗 API 额度。
 | 检索无结果 | 确认 indexed、`tenant_id` filter |
 | Rerank 未生效 | 检查 `COHERE_API_KEY`；无 Key 时自动降级为 Dense(0.7)+BM25(0.3) 融合 |
 | SSE 断开 | nginx 需 `X-Accel-Buffering: no` |
+| Langfuse 未启动 | `docker compose -f docker-compose.yml -f docker-compose.observability.yml --profile observability up -d` |
 
 ---
-
 ## 9. 已定实现决策（摘要）
 
 | 项 | 决策 |

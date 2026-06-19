@@ -1,7 +1,7 @@
 # BizMind — 企业知识智能助手 · 项目设计
 
-> **版本：** v0.5-quality  
-> **状态：** MVP 完成；v0.5 质量加固已交付；v0.6 可观测性进行中  
+> **版本：** v0.6-observability（进行中）  
+> **状态：** v0.5 已交付；面试话术、Langfuse 脚手架、覆盖率 70% 已就绪  
 > **待办：** 见 [todo0619.md](./todo0619.md)  
 > **目标周期：** 约 8 周（产品级 MVP，可面试演示）
 
@@ -518,7 +518,7 @@ data: {"code": "RATE_LIMIT", "message": "..."}
 | **P1 基础 RAG** | 第 1–2 周 | Auth、文档上传索引、Baseline RAG、最小 UI | ~95% |
 | **P2 Agent 工作流** | 第 3–4 周 | LangGraph、Hybrid+ Rerank、SSE、多轮记忆 | ~95% |
 | **P3 生产特性** | 第 5–6 周 | 多租户、版本感知、PDF、Admin UI、Redis 缓存限流 | ~88% |
-| **P4 评测与包装** | 第 7–8 周 | RAGAS 双模式对比、Docker、README；Langfuse 待做 | ~75% |
+| **P4 评测与包装** | 第 7–8 周 | RAGAS 双模式对比、面试话术、Langfuse 脚手架；节点 trace 待接 | ~80% |
 
 详情：[todo0619.md](./todo0619.md)
 
@@ -589,11 +589,15 @@ DATABASE_URL=postgresql+asyncpg://...
 REDIS_URL=redis://...
 QDRANT_URL=http://qdrant:6333
 
-# LLM
+# LLM（默认 DeepSeek，OpenAI 兼容）
 LLM_API_KEY=
-LLM_BASE_URL=https://api.openai.com/v1
-LLM_MODEL=gpt-4o-mini
-EMBEDDING_MODEL=text-embedding-3-small
+LLM_BASE_URL=https://api.deepseek.com/v1
+LLM_MODEL=deepseek-chat
+
+# Embedding（默认 SiliconFlow BGE-M3）
+EMBEDDING_API_KEY=
+EMBEDDING_BASE_URL=https://api.siliconflow.cn/v1
+EMBEDDING_MODEL=BAAI/bge-m3
 
 # RAG
 CHUNK_SIZE=512
@@ -644,7 +648,7 @@ LANGFUSE_HOST=
 | 优化点 | 策略 |
 |--------|------|
 | Embedding 重复计算 | Redis cache：`hash(text) → vector`，TTL 7d |
-| LLM 成本 | 路由简单问题走 `gpt-4o-mini`；critique 用更小模型 |
+| LLM 成本 | Router 分流简单问题；`CRITIQUE_MODEL` 可配更小模型（均走同一兼容 API） |
 | 检索延迟 | top_k 先 20 再 rerank 到 4；Qdrant HNSW 调参 |
 | 流式体验 | 首 token 目标 < 2s；retrieve 与 history summary 并行 |
 
@@ -727,4 +731,5 @@ README 中展示表格：
 | v0.2-progress | 2026-06-14 | 完成度审计；P1/P2 主体实现 |
 | v0.3-docs | 2026-06-16 | 文档精简为 design/api/dev/todo |
 | v0.4-interview-ready | 2026-06-16 | P0 收尾：RAGAS benchmark + Demo 脚本 + PDF 解析 + tag |
-| v0.5-quality | 2026-06-19 | 双模式 RAGAS、测试加固（≥60%）、Admin 页、HR PDF demo |
+| v0.5-quality | 2026-06-19 | 双模式 RAGAS、测试加固、Admin 页、HR PDF |
+| v0.6-observability | 2026-06-19 | 面试话术、Langfuse compose、覆盖率 70%（进行中） |

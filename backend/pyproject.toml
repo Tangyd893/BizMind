@@ -39,6 +39,9 @@ dev = [
     "mypy>=1.13.0",
     "aiosqlite>=0.22.1",
 ]
+observability = [
+    "langfuse>=2.0.0",
+]
 
 [build-system]
 requires = ["hatchling"]

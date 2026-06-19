@@ -5,6 +5,7 @@
 | [design.md](./design.md) | 总体设计：定位、架构、数据模型、里程碑 |
 | [api.md](./api.md) | REST + SSE 接口约定（实现以 `/docs` OpenAPI 为准） |
 | [dev.md](./dev.md) | 本地开发、部署、代码规范 |
+| [interview-script.md](./interview-script.md) | 10 分钟 Demo + 面试话术 |
 | [todo0619.md](./todo0619.md) | 完成度与待办（当前） |
 | [todo0616.md](./todo0616.md) | v0.4 收尾审计（已归档） |
 
@@ -34,5 +35,6 @@ BizMind/
 ├── scripts/           # seed_demo_docs · eval_rag · dev.ps1
 ├── docs/              # 本目录
 ├── docker-compose.yml
+├── docker-compose.observability.yml   # Langfuse（--profile observability）
 └── Makefile
 ```

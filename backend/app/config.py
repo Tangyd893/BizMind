@@ -35,12 +35,14 @@ class Settings(BaseSettings):
     jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
 
     llm_api_key: str = Field(default="", alias="LLM_API_KEY")
-    llm_base_url: str = Field(default="https://api.openai.com/v1", alias="LLM_BASE_URL")
-    llm_model: str = Field(default="gpt-4o-mini", alias="LLM_MODEL")
+    llm_base_url: str = Field(default="https://api.deepseek.com/v1", alias="LLM_BASE_URL")
+    llm_model: str = Field(default="deepseek-chat", alias="LLM_MODEL")
 
     embedding_api_key: str = Field(default="", alias="EMBEDDING_API_KEY")
-    embedding_base_url: str = Field(default="", alias="EMBEDDING_BASE_URL")
-    embedding_model: str = Field(default="text-embedding-3-small", alias="EMBEDDING_MODEL")
+    embedding_base_url: str = Field(
+        default="https://api.siliconflow.cn/v1", alias="EMBEDDING_BASE_URL"
+    )
+    embedding_model: str = Field(default="BAAI/bge-m3", alias="EMBEDDING_MODEL")
     embedding_provider: str = Field(default="openai", alias="EMBEDDING_PROVIDER")
     embedding_dim: int = Field(default=1024, alias="EMBEDDING_DIM")
     chunk_size: int = Field(default=512, alias="CHUNK_SIZE")
@@ -58,6 +60,11 @@ class Settings(BaseSettings):
     tavily_api_key: str = Field(default="", alias="TAVILY_API_KEY")
 
     rate_limit_per_minute: int = Field(default=60, alias="RATE_LIMIT_PER_MINUTE")
+
+    langfuse_public_key: str = Field(default="", alias="LANGFUSE_PUBLIC_KEY")
+    langfuse_secret_key: str = Field(default="", alias="LANGFUSE_SECRET_KEY")
+    langfuse_host: str = Field(default="http://localhost:3001", alias="LANGFUSE_HOST")
+    langfuse_enabled: bool = Field(default=False, alias="LANGFUSE_ENABLED")
 
     @property
     def is_test(self) -> bool:

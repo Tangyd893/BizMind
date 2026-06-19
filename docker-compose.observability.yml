@@ -1,0 +1,35 @@
+# docker-compose.observability.yml
+# Langfuse observability profile — docker compose --profile observability up -d
+#
+# Usage:
+#   docker compose --profile observability up -d
+#   docker compose --profile observability down
+#
+# Requires LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY in .env
+# After startup: http://localhost:3001
+
+services:
+  langfuse-server:
+    image: langfuse/langfuse:latest
+    profiles:
+      - observability
+    ports:
+      - "3001:3000"
+    environment:
+      DATABASE_URL: postgresql://bizmind:bizmind@postgres:5432/bizmind_langfuse
+      NEXTAUTH_SECRET: change-me-langfuse-secret-at-least-32-chars
+      SALT: change-me-salt
+      NEXTAUTH_URL: http://localhost:3001
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
+      LANGFUSE_INIT_ORG_ID: bizmind-org
+      LANGFUSE_INIT_ORG_NAME: BizMind
+      LANGFUSE_INIT_PROJECT_ID: bizmind
+      LANGFUSE_INIT_PROJECT_NAME: BizMind
+      LANGFUSE_INIT_USER_EMAIL: admin@bizmind.local
+      LANGFUSE_INIT_USER_NAME: Admin
+      LANGFUSE_INIT_USER_PASSWORD: AdminPass123!
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped

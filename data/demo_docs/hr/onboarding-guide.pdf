@@ -1,0 +1,93 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Length 3205 >>
+stream
+BT
+/F1 10 Tf 50 750 Td (Employee Onboarding Guide) Tj
+/F1 10 Tf 50 738 Td () Tj
+/F1 10 Tf 50 726 Td (Welcome to Our Company!) Tj
+/F1 10 Tf 50 714 Td () Tj
+/F1 10 Tf 50 702 Td (1. First Day Checklist) Tj
+/F1 10 Tf 50 690 Td (   - Complete HR paperwork \(I-9, W-4, direct deposit\)) Tj
+/F1 10 Tf 50 678 Td (   - Receive employee badge and parking pass) Tj
+/F1 10 Tf 50 666 Td (   - Set up workstation: laptop, monitor, keyboard, mouse) Tj
+/F1 10 Tf 50 654 Td (   - Meet your buddy/mentor) Tj
+/F1 10 Tf 50 642 Td () Tj
+/F1 10 Tf 50 630 Td (2. First Week Goals) Tj
+/F1 10 Tf 50 618 Td (   - Complete compliance training \(Code of Conduct, Security Awareness\)) Tj
+/F1 10 Tf 50 606 Td (   - Attend team standup meetings) Tj
+/F1 10 Tf 50 594 Td (   - Set up development environment) Tj
+/F1 10 Tf 50 582 Td (   - Review team documentation and runbooks) Tj
+/F1 10 Tf 50 570 Td (   - Schedule 1:1 with manager) Tj
+/F1 10 Tf 50 558 Td () Tj
+/F1 10 Tf 50 546 Td (3. Benefits Enrollment \(within 30 days\)) Tj
+/F1 10 Tf 50 534 Td (   - Health insurance: Medical, Dental, Vision) Tj
+/F1 10 Tf 50 522 Td (   - 401\(k\) retirement plan with company match up to 4%) Tj
+/F1 10 Tf 50 510 Td (   - Flexible Spending Account \(FSA\)) Tj
+/F1 10 Tf 50 498 Td (   - Life and disability insurance) Tj
+/F1 10 Tf 50 486 Td (   - Employee Assistance Program \(EAP\)) Tj
+/F1 10 Tf 50 474 Td () Tj
+/F1 10 Tf 50 462 Td (4. Company Policies) Tj
+/F1 10 Tf 50 450 Td (   - Work hours: Flexible core hours 10am-4pm) Tj
+/F1 10 Tf 50 438 Td (   - Remote work: Hybrid model, 3 days in office per week) Tj
+/F1 10 Tf 50 426 Td (   - PTO: 15 days per year, accruing monthly) Tj
+/F1 10 Tf 50 414 Td (   - Sick leave: 10 days per year) Tj
+/F1 10 Tf 50 402 Td (   - Parental leave: 12 weeks paid) Tj
+/F1 10 Tf 50 390 Td () Tj
+/F1 10 Tf 50 378 Td (5. Key Systems & Tools) Tj
+/F1 10 Tf 50 366 Td (   - Slack for team communication) Tj
+/F1 10 Tf 50 354 Td (   - Jira for project tracking) Tj
+/F1 10 Tf 50 342 Td (   - Confluence for documentation) Tj
+/F1 10 Tf 50 330 Td (   - GitHub for source control) Tj
+/F1 10 Tf 50 318 Td (   - Okta for single sign-on) Tj
+/F1 10 Tf 50 306 Td (   - Workday for HR and payroll) Tj
+/F1 10 Tf 50 294 Td () Tj
+/F1 10 Tf 50 282 Td (6. Org Structure) Tj
+/F1 10 Tf 50 270 Td (   - CEO -> VP Engineering -> Engineering Manager -> You) Tj
+/F1 10 Tf 50 258 Td (   - Product team works in 2-week sprints) Tj
+/F1 10 Tf 50 246 Td (   - Quarterly all-hands meetings) Tj
+/F1 10 Tf 50 234 Td () Tj
+/F1 10 Tf 50 222 Td (7. Security Best Practices) Tj
+/F1 10 Tf 50 210 Td (   - Use password manager \(1Password\)) Tj
+/F1 10 Tf 50 198 Td (   - Enable 2FA on all accounts) Tj
+/F1 10 Tf 50 186 Td (   - Lock screen when away from desk) Tj
+/F1 10 Tf 50 174 Td (   - Report phishing emails to security@company.com) Tj
+/F1 10 Tf 50 162 Td (   - Never share credentials) Tj
+/F1 10 Tf 50 150 Td () Tj
+/F1 10 Tf 50 138 Td (8. Contact Information) Tj
+/F1 10 Tf 50 126 Td (   - HR: hr@company.com) Tj
+/F1 10 Tf 50 114 Td (   - IT Helpdesk: it@company.com, ext. 4357) Tj
+/F1 10 Tf 50 102 Td (   - Office Manager: office@company.com) Tj
+/F1 10 Tf 50 90 Td () Tj
+/F1 10 Tf 50 78 Td (Welcome aboard! We are excited to have you on the team.) Tj
+ET
+endstream
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000000 00000 n 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000183 00000 n 
+0000000217 00000 n 
+0000003422 00000 n 
+0000003440 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3566
+%%EOF

@@ -29,6 +29,7 @@ frontend/dist/
 data/uploads/
 data/**/*.pdf
 !data/demo_docs/
+!data/demo_docs/**/*.pdf
 
 # IDE
 .idea/
@@ -42,8 +43,9 @@ Thumbs.db
 # Docker
 *.log
 
-# Eval outputs
+# Eval outputs (legacy path; canonical: data/eval-results.json — tracked)
 docs/eval-results.json
+install-uv.ps1
 
 # Test DB (sqlite fallback)
 backend/test.db

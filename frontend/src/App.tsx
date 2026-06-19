@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ChatPage from "./pages/ChatPage";
 import DocumentsPage from "./pages/DocumentsPage";
+import AdminPage from "./pages/AdminPage";
 import EvalPage from "./pages/EvalPage";
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/documents" element={<DocumentsPage />} />
         <Route path="/eval" element={<EvalPage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/chat" replace />} />
     </Routes>

@@ -27,6 +27,11 @@ export default function Layout() {
             <Link to="/eval" className="text-neutral-600 hover:text-neutral-900">
               评测
             </Link>
+            {user?.role === "ADMIN" && (
+              <Link to="/admin" className="text-neutral-600 hover:text-neutral-900">
+                管理
+              </Link>
+            )}
           </nav>
         </div>
         <div className="flex items-center gap-3 text-sm">

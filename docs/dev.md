@@ -71,7 +71,7 @@ curl http://localhost:8000/api/v1/health
 
 ```bash
 cd backend
-uv run pytest tests/ -q --cov=app --cov-fail-under=50   # 默认 SQLite，无需 Docker
+uv run pytest tests/ -q --cov=app --cov-fail-under=60   # 默认 SQLite，无需 Docker
 ```
 
 可选：用 Docker PostgreSQL 跑集成测试（宿主机端口 **5433**，避免与本地 PostgreSQL 5432 冲突）：
@@ -85,8 +85,8 @@ DATABASE_URL=postgresql+asyncpg://bizmind:bizmind@127.0.0.1:5433/bizmind_test \
 
 | 阶段 | 覆盖率目标 |
 |------|------------|
-| 当前 | ≥ 50%（已达 ~55%） |
-| P2 结束 | ≥ 70% |
+| v0.5（当前） | ≥ 60%（CI 门槛；~76 tests） |
+| v0.6 目标 | ≥ 70% |
 
 CI 使用 mock LLM，不消耗 API 额度。
 
@@ -109,6 +109,7 @@ CI 使用 mock LLM，不消耗 API 额度。
 | health 503 | 检查 `DATABASE_URL`、容器是否 healthy |
 | 文档一直 pending | 查 backend 日志、LLM/Embedding Key |
 | 检索无结果 | 确认 indexed、`tenant_id` filter |
+| Rerank 未生效 | 检查 `COHERE_API_KEY`；无 Key 时自动降级为 Dense(0.7)+BM25(0.3) 融合 |
 | SSE 断开 | nginx 需 `X-Accel-Buffering: no` |
 
 ---

@@ -1,0 +1,24 @@
+{
+  "baseline_1781864584": {
+    "mode": "baseline",
+    "sample_count": 21,
+    "metrics": {
+      "faithfulness": 0.6983,
+      "answer_relevancy": 0.1578,
+      "context_precision": 0.0,
+      "context_recall": 0.2353
+    },
+    "duration_sec": 297
+  },
+  "agent_1781865009": {
+    "mode": "agent",
+    "sample_count": 21,
+    "metrics": {
+      "faithfulness": 0.6908,
+      "answer_relevancy": 0.1712,
+      "context_precision": 0.0,
+      "context_recall": 0.1905
+    },
+    "duration_sec": 425
+  }
+}

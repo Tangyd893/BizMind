@@ -124,11 +124,11 @@ async def hybrid_retrieve(
         bm25_scores = bm25.get_scores(tokenized_query)
 
         # Normalize BM25 scores to 0-1
-        max_bm25 = max(bm25_scores) if bm25_scores and max(bm25_scores) > 0 else 1.0
+        max_bm25 = float(max(bm25_scores)) if len(bm25_scores) > 0 and float(max(bm25_scores)) > 0 else 1.0
 
         for i, r in enumerate(all_candidates):
             cid = str(r["chunk_id"])
-            bm25_norm = bm25_scores[i] / max_bm25 if max_bm25 > 0 else 0.0
+            bm25_norm = float(bm25_scores[i]) / max_bm25 if max_bm25 > 0 else 0.0
             dense_score = dense_map.get(cid, (0.0,))[0]
             # Weighted fusion: 0.7 dense + 0.3 BM25
             fused_score = 0.7 * dense_score + 0.3 * bm25_norm

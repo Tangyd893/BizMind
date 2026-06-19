@@ -13,7 +13,6 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-import time
 
 async def _get_demo_tenant_id() -> str:
     """Resolve the demo tenant ID at runtime."""
@@ -27,10 +26,6 @@ async def _get_demo_tenant_id() -> str:
 
 
 async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
-    from app.rag.retriever import hybrid_retrieve, retrieve
-    from app.rag.llm_client import get_llm_client
-    from app.config import get_settings
-
     # Load dataset
     import sys
     from pathlib import Path
@@ -50,8 +45,28 @@ async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
         qa_pairs = qa_pairs[:sample_limit]
 
     demo_tenant_id = await _get_demo_tenant_id()
-    print(f"Running {mode} eval on {len(qa_pairs)} QA pairs (tenant={demo_tenant_id})...")
+
+    # For "both" mode, delegate to individual runs
+    if mode == "both":
+        print(f"Running both baseline + agent eval on {len(qa_pairs)} QA pairs (tenant={demo_tenant_id})...")
+        rc_base = await _run_single_mode("baseline", qa_pairs, demo_tenant_id)
+        rc_agent = await _run_single_mode("agent", qa_pairs, demo_tenant_id)
+        return 0 if rc_base == 0 and rc_agent == 0 else 1
+
+    return await _run_single_mode(mode, qa_pairs, demo_tenant_id)
+
+
+async def _run_single_mode(mode: str, qa_pairs: list[dict], demo_tenant_id: str) -> int:
+    """Run a single evaluation mode (baseline or agent)."""
+    from app.rag.retriever import hybrid_retrieve, retrieve
+    from app.rag.llm_client import get_llm_client
+    from app.config import get_settings
+
+    import sys, time
+    from pathlib import Path
+
     start = time.perf_counter()
+    print(f"Running {mode} eval on {len(qa_pairs)} QA pairs (tenant={demo_tenant_id})...")
 
     questions = []
     answers = []
@@ -151,8 +166,9 @@ async def _main(mode: str = "baseline", sample_limit: int | None = None) -> int:
         print(f"\n=== {mode.upper()} RAGAS Results ===")
         print(json.dumps(metrics, indent=2))
 
-        # Save to file
-        out_path = Path(__file__).parent.parent / "docs" / "eval-results.json"
+        # Save to file (container writes to mounted data/ dir)
+        out_path = Path(__file__).parent.parent / "data" / "eval-results.json"
+        out_path.parent.mkdir(parents=True, exist_ok=True)
         existing = {}
         if out_path.exists():
             existing = json.loads(out_path.read_text())

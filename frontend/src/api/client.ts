@@ -172,4 +172,18 @@ export function streamChat(threadId: string, message: string, mode: "baseline" |
   });
 }
 
+// Admin
+export interface AdminUser {
+  id: string;
+  email: string;
+  role: string;
+  tenant_id: string;
+  created_at: string;
+}
+
+export async function fetchAdminUsers(page = 1): Promise<PaginatedResponse<AdminUser>> {
+  const params = new URLSearchParams({ page: String(page), page_size: "20" });
+  return request<PaginatedResponse<AdminUser>>(`/admin/users?${params}`);
+}
+
 export { API_BASE };

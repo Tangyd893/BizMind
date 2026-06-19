@@ -1,8 +1,8 @@
 # BizMind — 企业知识智能助手 · 项目设计
 
-> **版本：** v0.4-interview-ready  
-> **状态：** P0 完成，P1 收尾中，P2 加分项  
-> **待办：** 见 [todo0616.md](./todo0616.md)  
+> **版本：** v0.5-quality  
+> **状态：** MVP 完成；v0.5 质量加固已交付；v0.6 可观测性进行中  
+> **待办：** 见 [todo0619.md](./todo0619.md)  
 > **目标周期：** 约 8 周（产品级 MVP，可面试演示）
 
 ---
@@ -57,7 +57,7 @@ BizMind 以「企业知识场景」为切入点，与已有 HIS/ERP 领域经验
 - [x] GitHub 公开仓库，README 含架构图 + Docker Compose 一键启动
 - [x] ≥ 3 类企业样例文档 + ≥ 20 条 Golden QA（4 类文档含 PDF，QA **21/21**）
 - [x] LangGraph Agent 工作流可演示（含 retrieve grade / critique 分支）
-- [x] RAGAS 评测结果可复现，README 有 benchmark 表格（faithfulness=0.77）
+- [x] RAGAS 评测结果可复现，README 有 **baseline vs agent** 对比表（faithfulness ~0.70）
 - [x] 多租户文档隔离 + 文档版本感知对话（测试覆盖待加强）
 - [x] 10 分钟内可完成一次完整面试 Demo（`scripts/demo.ps1`）
 
@@ -249,7 +249,7 @@ BizMind/
 │   ├── design.md                      # 本文档
 │   ├── api.md                         # REST + SSE
 │   ├── dev.md                         # 开发部署
-│   └── todo0616.md                    # 待办
+│   └── todo0619.md                    # 待办（当前）
 │
 ├── backend/
 │   ├── pyproject.toml                 # uv / Poetry 依赖
@@ -517,10 +517,10 @@ data: {"code": "RATE_LIMIT", "message": "..."}
 |-------|------|------|------|
 | **P1 基础 RAG** | 第 1–2 周 | Auth、文档上传索引、Baseline RAG、最小 UI | ~95% |
 | **P2 Agent 工作流** | 第 3–4 周 | LangGraph、Hybrid+ Rerank、SSE、多轮记忆 | ~95% |
-| **P3 生产特性** | 第 5–6 周 | 多租户、版本感知、Web Fallback、Redis 缓存限流 | ~80% |
-| **P4 评测与包装** | 第 7–8 周 | RAGAS、Langfuse、Docker、README、面试文档 | ~60% |
+| **P3 生产特性** | 第 5–6 周 | 多租户、版本感知、PDF、Admin UI、Redis 缓存限流 | ~88% |
+| **P4 评测与包装** | 第 7–8 周 | RAGAS 双模式对比、Docker、README；Langfuse 待做 | ~75% |
 
-详情：[todo0616.md](./todo0616.md)
+详情：[todo0619.md](./todo0619.md)
 
 ### 7.2 分支策略
 
@@ -567,7 +567,7 @@ jobs:
   backend:
     - ruff check + format --check
     - mypy app/
-    - pytest tests/ -q --cov=app --cov-fail-under=70
+    - pytest tests/ -q --cov=app --cov-fail-under=60   # 目标 70%，见 todo0619 #17
   frontend:
     - npm ci && npm run lint && npm run test
   docker:
@@ -600,6 +600,12 @@ CHUNK_SIZE=512
 CHUNK_OVERLAP=64
 RETRIEVAL_TOP_K=20
 RERANK_TOP_K=4
+RERANK_PROVIDER=local  # "cohere" 或 "local"；local 仅用 Dense+BM25 融合
+
+# Rerank 降级策略：
+#   有 COHERE_API_KEY + RERANK_PROVIDER=cohere → Cohere Rerank v3（Cross-Encoder 精排）
+#   无 Key 或 RERANK_PROVIDER=local → Dense(0.7) + BM25(0.3) 融合分排序
+#   降级不影响检索可用性，仅精排精度略有下降
 
 # Agent
 MAX_RETRIEVAL_RETRIES=2
@@ -677,7 +683,7 @@ README 中展示表格：
 | 风险 | 影响 | 缓解 |
 |------|------|------|
 | LLM API 不稳定 | Demo 失败 | 配置备用 base_url；集成测试 mock |
-| Rerank 模型体积大 | 部署慢 | 可选 Cohere API；Docker 多阶段构建 |
+| Rerank 模型体积大 | 部署慢 | 可选 Cohere API；Docker 多阶段构建；无 Key 时自动降级为 Dense+BM25 融合 |
 | Scope 膨胀 | 延期 | 严格按 Phase 交付；非目标写死 |
 | 评测分数低 | 面试说服力弱 | 优先优化 chunk + rerank，再调 Agent |
 | 前端耗时过多 | 后端完不成 | P1 可用简易 UI；P2 再 polish |
@@ -690,7 +696,7 @@ README 中展示表格：
 2. **技术亮点：** LangGraph 条件工作流、Hybrid Retrieval、文档版本感知、RAGAS 量化。
 3. **工程亮点：** 多租户隔离、SSE 流式、Redis 缓存、Docker 一键部署、CI 测试。
 4. **权衡举例：** Agent 延迟 vs 准确率；Parent-Child vs Fixed Chunk。
-5. **下一步：** 见 [todo0616.md](./todo0616.md)
+5. **下一步：** 见 [todo0619.md](./todo0619.md)
 
 ---
 
@@ -708,7 +714,7 @@ README 中展示表格：
 | [design.md](./design.md) | 本文 — 总体设计 |
 | [api.md](./api.md) | 接口规范 |
 | [dev.md](./dev.md) | 开发、部署、规范 |
-| [todo0616.md](./todo0616.md) | 完成度与待办 |
+| [todo0619.md](./todo0619.md) | 完成度与待办 |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | 协作与 PR |
 
 ### 11.3 修订记录
@@ -721,3 +727,4 @@ README 中展示表格：
 | v0.2-progress | 2026-06-14 | 完成度审计；P1/P2 主体实现 |
 | v0.3-docs | 2026-06-16 | 文档精简为 design/api/dev/todo |
 | v0.4-interview-ready | 2026-06-16 | P0 收尾：RAGAS benchmark + Demo 脚本 + PDF 解析 + tag |
+| v0.5-quality | 2026-06-19 | 双模式 RAGAS、测试加固（≥60%）、Admin 页、HR PDF demo |
